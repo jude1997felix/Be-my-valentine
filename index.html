@@ -1,0 +1,330 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Be My Valentine?</title>
+    <!-- Google Fonts for cute handwritten styles -->
+    <link href="https://fonts.googleapis.com/css2?family=Dancing+Script:wght@700&family=Pacifico&display=swap" rel="stylesheet">
+    <style>
+        /* 
+         * COLOR PALETTE & VARIABLES
+         * Soft pastel layout suitable for romantic theme
+         */
+        :root {
+            --color-bg-1: #fff0f5;  /* Lavender Blush */
+            --color-bg-2: #ffe4e1;  /* Misty Rose */
+            --color-bg-3: #e6e6fa;  /* Lavender */
+            --color-btn-yes: #ffb7b2;
+            --color-btn-yes-hover: #ff9e99;
+            --color-btn-no: #f8f9fa;
+            --color-text-main: #d65db1;
+            --color-success: #ff6b6b;
+        }
+
+        body {
+            margin: 0;
+            padding: 0;
+            height: 100vh;
+            width: 100vw;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            background: linear-gradient(135deg, var(--color-bg-1), var(--color-bg-2), var(--color-bg-3));
+            font-family: 'Dancing Script', cursive;
+            overflow: hidden; /* Prevent scrolling when button moves */
+            position: relative;
+        }
+
+        /* 
+         * FLOATING HEARTS BACKGROUND 
+         * Pure CSS animation for performance
+         */
+        .heart-bg {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none; /* Allow klicks to pass through */
+            z-index: 0;
+            overflow: hidden;
+        }
+        
+        .heart {
+            position: absolute;
+            bottom: -50px;
+            display: block;
+            width: 20px;
+            height: 20px;
+            background: var(--heart-color);
+            transform: rotate(45deg);
+            animation: floatUp 6s linear infinite;
+        }
+
+        .heart::before,
+        .heart::after {
+            content: "";
+            position: absolute;
+            width: 20px;
+            height: 20px;
+            background: inherit;
+            border-radius: 50%;
+        }
+
+        .heart::before { left: -10px; }
+        .heart::after { top: -10px; }
+
+        @keyframes floatUp {
+            0% { transform: translateY(0) rotate(45deg) scale(0.8); opacity: 0; }
+            20% { opacity: 0.8; }
+            100% { transform: translateY(-120vh) rotate(45deg) scale(1.2); opacity: 0; }
+        }
+
+        /* 
+         * MAIN CONTENT LAYOUT 
+         */
+        .container {
+            z-index: 10;
+            text-align: center;
+            padding: 20px;
+            width: 90%;
+            max-width: 600px;
+        }
+
+        /* 
+         * IMAGE PLACEHOLDER 
+         * Commented out section for future image insertion
+         */
+        .image-placeholder {
+            margin-bottom: 20px;
+            /* width: 200px; */
+            /* height: auto; */
+            /* display: block; */
+            /* margin: 0 auto 20px auto; */
+        }
+
+        h1 {
+            font-size: 3.5rem;
+            color: var(--color-text-main);
+            margin-bottom: 40px;
+            text-shadow: 2px 2px 4px rgba(255, 255, 255, 0.5);
+            line-height: 1.2;
+        }
+
+        .buttons {
+            display: flex;
+            gap: 30px;
+            justify-content: center;
+            align-items: center;
+            min-height: 80px; /* Preserve space */
+        }
+
+        button {
+            font-family: 'Pacifico', cursive;
+            font-size: 1.5rem;
+            padding: 15px 40px;
+            border: none;
+            border-radius: 50px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+            white-space: nowrap;
+        }
+
+        /* YES Button Styles */
+        #yesBtn {
+            background-color: var(--color-btn-yes);
+            color: white;
+            z-index: 20;
+        }
+
+        #yesBtn:hover {
+            background-color: var(--color-btn-yes-hover);
+            transform: scale(1.1);
+        }
+
+        /* NO Button Styles */
+        #noBtn {
+            background-color: var(--color-btn-no);
+            color: #888;
+            position: relative; /* Starts relative, becomes fixed on interaction */
+            z-index: 20;
+        }
+
+        /* Success Message */
+        .success-message {
+            font-family: 'Pacifico', cursive;
+            font-size: 4rem;
+            color: var(--color-success);
+            display: none; /* Hidden by default */
+            animation: popIn 0.6s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        }
+
+        @keyframes popIn {
+            0% { transform: scale(0); opacity: 0; }
+            100% { transform: scale(1); opacity: 1; }
+        }
+
+        /* Mobile Responsiveness */
+        @media (max-width: 600px) {
+            h1 { font-size: 2.5rem; }
+            button { font-size: 1.2rem; padding: 12px 30px; }
+            .buttons { flex-direction: column; gap: 20px; }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Dynamic Background -->
+    <div class="heart-bg" id="heartBg"></div>
+
+    <main class="container">
+        <!-- 
+            ************************************************
+            IMAGE AREA:
+            To add an image later, insert your <img> tag correctly inside this div.
+            Example: <img src="cute-winnie-pooh.gif" alt="Cute Gif" style="max-width: 200px; border-radius: 10px;">
+            ************************************************
+        -->
+        <div class="image-placeholder" id="placeholder"></div>
+
+        <h1 id="question">Hello Thangame, will you be my Valentine this year?</h1>
+        
+        <div class="buttons" id="btnContainer">
+            <button id="yesBtn">Yes</button>
+            <button id="noBtn">No</button>
+        </div>
+
+        <div class="success-message" id="successMsg">💖 Yay! 💖</div>
+    </main>
+
+    <script>
+        // DOM Elements
+        const yesBtn = document.getElementById('yesBtn');
+        const noBtn = document.getElementById('noBtn');
+        const successMsg = document.getElementById('successMsg');
+        const question = document.getElementById('question');
+        const btnContainer = document.getElementById('btnContainer');
+
+        // --- Logic for YES Button ---
+        
+        const yesTexts = [
+            "Yes",                // Initial state
+            "Are you sure?",      // 1st click
+            "Really?",            // 2nd click
+            "Think One Last Time" // 3rd click
+        ];
+        let yesIndex = 0;
+
+        yesBtn.addEventListener('click', () => {
+            yesIndex++;
+
+            if (yesIndex < yesTexts.length) {
+                // Update text to next in sequence
+                yesBtn.innerText = yesTexts[yesIndex];
+                
+                // Optional: Make Yes button slightly bigger each time to encourage clicking
+                const currentScale = 1 + (yesIndex * 0.1);
+                yesBtn.style.transform = `scale(${currentScale})`;
+
+            } else {
+                // Sequence finished -> Trigger Success
+                triggerSuccess();
+            }
+        });
+
+        function triggerSuccess() {
+            // Hide Question and Buttons
+            question.style.display = 'none';
+            btnContainer.style.display = 'none';
+            
+            // Show Success Message
+            successMsg.style.display = 'block';
+
+            // ADDITIONAL PLACEHOLDER FOR IMAGE IN SUCCESS STATE
+            // You can also manipulate document.getElementById('placeholder') here 
+            // if you want a specific "Yay" image to appear only on success.
+        }
+
+
+        // --- Logic for NO Button ---
+
+        let noScale = 1;
+
+        // Function to move the No Button
+        function moveNoBtn() {
+            // Ensure button moves to fixed position to breakaway from layout flow
+            noBtn.style.position = 'fixed'; 
+
+            // Calculate available viewport area minus button size
+            // We use a margin buffer of 30px to keep it away from edges
+            const maxWidth = window.innerWidth - noBtn.offsetWidth - 30;
+            const maxHeight = window.innerHeight - noBtn.offsetHeight - 30;
+
+            const randomX = Math.max(30, Math.random() * maxWidth);
+            const randomY = Math.max(30, Math.random() * maxHeight);
+
+            noBtn.style.left = randomX + 'px';
+            noBtn.style.top = randomY + 'px';
+
+            // Shrink effect
+            noScale -= 0.1;
+            // Cap minimum scale so it doesn't disappear completely (min 50% size)
+            if (noScale < 0.5) noScale = 0.5; 
+            noBtn.style.transform = `scale(${noScale})`;
+        }
+
+        // Desktop: Move on Hover
+        noBtn.addEventListener('mouseover', moveNoBtn);
+
+        // Mobile: Move on Touch
+        // 'touchstart' is better than 'click' for mobile responsiveness 
+        noBtn.addEventListener('touchstart', (e) => {
+            e.preventDefault(); // Stop default touch behavior (which might be click)
+            moveNoBtn();
+        });
+
+        // Fail-safe: Prevent clicking if user somehow manages to click
+        noBtn.addEventListener('click', (e) => {
+            e.preventDefault();
+            moveNoBtn();
+        });
+
+
+        // --- Logic for Background Hearts ---
+
+        function createHearts() {
+            const container = document.getElementById('heartBg');
+            const heartCount = 20; // Number of floating hearts
+
+            for (let i = 0; i < heartCount; i++) {
+                const heart = document.createElement('span');
+                heart.classList.add('heart');
+                
+                // Random Horizontal Position
+                heart.style.left = Math.random() * 100 + '%';
+                
+                // Randomize Animation timings for natural feel
+                const duration = Math.random() * 5 + 5; // between 5s and 10s
+                const delay = Math.random() * 5;        // start delay
+                
+                heart.style.animationDuration = duration + 's';
+                heart.style.animationDelay = delay + 's';
+
+                // Random Soft Colors
+                const colors = ['#FFB7B2', '#FF9E9E', '#FFDAC1', '#FFFFF0'];
+                const randomColor = colors[Math.floor(Math.random() * colors.length)];
+                heart.style.setProperty('--heart-color', randomColor);
+
+                container.appendChild(heart);
+            }
+        }
+
+        // Initialize Background
+        createHearts();
+
+    </script>
+</body>
+</html>
